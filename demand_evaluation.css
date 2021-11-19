@@ -1,0 +1,13 @@
+.antd-pro-layouts-main-header, .antd-pro-pages-main-evaluation-detail-index-navLists, .antd-pro-pages-main-evaluation-detail-index-downloadBtn, .antd-pro-pages-main-evaluation-detail-index-evaluationMainLeft {
+  display: none;
+}
+
+.antd-pro-pages-main-evaluation-detail-index-evaluationMain .antd-pro-pages-main-evaluation-detail-index-evaluationMainRight {
+  width: auto;
+  position: relative;
+}
+.antd-pro-pages-main-evaluation-detail-index-downloadBtn {
+  visibility:hidden;
+}
+
+

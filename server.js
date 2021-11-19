@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 // 解析post参数
 const bodyParser = require('body-parser');
@@ -12,14 +13,14 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 const scrollPageToBottom = require('puppeteer-autoscroll-down')
 
 const launchOptions = {
-    headless: false,
+    headless: true,
     ignoreHTTPSErrors: true,        // 忽略证书错误
     userDataDir: 'user_data_dir',
     waitUntil: ['domcontentloaded', 'networkidle0'],
-    defaultViewport: {
-        width: 1920,
-        height: 1080
-    },
+    // defaultViewport: {
+    //     width: 1920,
+    //     height: 1080
+    // },
     args: [
         '--disable-gpu',
         '--disable-dev-shm-usage',
@@ -64,7 +65,19 @@ const launchOptions = {
         // 把超时时间禁用，否则下拉的时候，如果页数比较多，会导致超时问题
         await page.setDefaultNavigationTimeout(0)
 
-        const _response = await page.goto(url);
+        const _response = await page.goto(url, { waitUntil: 'networkidle0' });
+        const cssPath = path.join(__dirname, 'demand_evaluation.css')
+        const pdfFilePath = path.join(__dirname, '/index.pdf')
+        console.log(pdfFilePath)
+        await page.addStyleTag({path: cssPath})
+        const pdf = await page.pdf({
+            path: pdfFilePath,
+            format: 'A4',
+            scale: 1,
+            printBackground: true,
+            landscape: true,
+            displayHeaderFooter: false
+        });
 
         const statusCode = await _response.status()
         const headers = await _response.headers()
@@ -72,10 +85,10 @@ const launchOptions = {
 
         if (data.isDownload) {
             // download image、pdf...
-            const buffer = await _response.buffer()
+            // const buffer = await _response.buffer()
             return {
                 'statusCode': statusCode,
-                'content': buffer,
+                'content': pdf,
                 'headers': headers
             }
         }
